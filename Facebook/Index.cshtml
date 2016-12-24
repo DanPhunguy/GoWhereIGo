@@ -1,0 +1,330 @@
+﻿@using Microsoft.Owin.Security
+@{
+    Layout = "~/Views/Shared/_LayoutAlternate.cshtml";
+    ViewBag.Title = "Log in";
+
+    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+}
+
+@section styles {
+    <style type="text/css">
+        .btnz {
+            display: block;
+            float: left;
+            padding: 10px 15px;
+            border: none;
+            background-color: #ececec;
+            text-decoration: none;
+            font-size: 18px;
+            color: #FFF;
+        }
+        .button-width {
+            width:150px;
+            height: 50px;
+        }
+        .btn-register {
+            text-decoration: none;
+            font-size: 18px;
+            
+        }
+
+            .btnz:hover {
+                color: #efefef;
+            }
+
+        .facebook {
+            background-color: #3b5998;
+        }
+    </style>
+
+
+
+}
+
+
+<div class="top_promo_block">
+    <div class="auth_container">
+        <div class="container">
+            <div class="row">
+                <div class="hidden-sm col-sm-6 col-md-7">
+                    <div class="auth_descr hidden-xs">
+                        <a href="#" class="menu_xs hidden-md hidden-sm hidden-lg">
+                            <i class="fa fa-bars fa-2x"></i>
+                        </a>
+                        <h2>
+                            <strong>
+                                Go Where I GO
+                            </strong>
+                            <span>:</span>
+                            <span class="yellow">
+                                Auth
+                            </span>
+                        </h2>
+                        <p>
+                            An App where you can find the best local places to eat and play, curated by your friends and local experts.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="reg_image_container">
+                        <div class="reg_block">
+                            <div class="btn-hack">
+                                <form role="form" id="loginForm">
+                                    <div>
+                                        <div class="authorization">
+                                            <div class="authorization_head clearfix">
+                                                <p class="edited auth" id="edited_Autorization1">Login</p>
+                                            </div>
+                                            <div class="authorization_form">
+                                                <div class="auth_input clearfix">
+                                                    <div class="icon">
+                                                        <i class="fa fa-envelope fa-2x"></i>
+                                                    </div>
+                                                    <label class="enter_label">Username:</label>
+                                                    <input class="tel" id="loginUserName" type="text" name="Username" placeholder="Enter Your Username.">
+                                                </div>
+                                                <div class="auth_input clearfix">
+                                                    <div class="icon">
+                                                        <i class="fa fa-key fa-2x"></i>
+                                                    </div>
+                                                    <label class="enter_label">Password:</label>
+                                                    <input class="form-control e-mail_in" id="loginPassword" type="password" name="Password" placeholder="Enter Your Password.">
+                                                </div>
+                                            </div>
+                                            <div class="auth_login">
+                                                <button class="ladda-button ladda-primary btn btn-primary loginSubmitBtn hvr-float" id="try_login" data-color="red" data-style="zoom-out"><span class="ladda-label">Log In</span><span class="ladda-spinner"></span></button>
+                                                <div id="loginresult"><a href="wp-loginc2b6.html?action=lostpassword">Lost your password?</a></div>
+
+                                            </div>
+
+
+                                            <div class="auth_soc_network">
+                                                <p>Haven't signed up yet?</p>
+                                                <div class="btn-group btn-group-justified" role="group">
+                                                    @using (Html.BeginForm("Facebook", "Login"))
+                                                    {
+                                                        @Html.AntiForgeryToken()
+                                                        <div id="socialLoginList">
+                                                            <p>
+                                                                @foreach (AuthenticationDescription p in loginProviders)
+                                                                {
+                                                                    <button type="submit"  class="fa fa-facebook btnz facebook button-width" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"> Facebook</button>
+                                                                }
+                                                            </p>
+                                                        </div>
+                                                    }
+
+
+                                                    <a href="/public/registration" class="fa btnz btn-default button-width" id="loginSignupBtn" data-color="blue" data-style="zoom-out"><span class="ladda-label btn-register">Sign Up Here</span><span class="ladda-spinner"></span></a>
+                                                </div>
+                                                @* --- Connect via externals to be implemented in near future ---
+                                                    <p> Log in with social network</p>
+                                                    <div class="soc_net">
+                                                            <div class="oneall_social_login">
+                                                                <div class="oneall_social_login_providers" id="oneall_social_login_providers_8699747" style="visibility: visible; background-color: rgb(239, 223, 223); color: rgb(184, 12, 20); padding: 10px; line-height: 16px; font-size: 11px; border: 1px dashed rgb(184, 12, 20); display: block;"><strong>[OneAll]</strong> To enforce the security of our services we require each domain to be whitelisted. Please <a style="color:#333;text-decoration: underline;" target="_blank" href="http://app.oneall.com/applications/application/settings/security/?applicationid=363261">click here to open your security settings</a> and whitelist the domain <strong></strong>. Reload this page afterwards.</div>
+                                                                        <script type="text/javascript">
+                                                                            var _oneall = _oneall || [];
+                                                                            _oneall.push(['social_login', 'set_providers', ['facebook', 'google', 'instagram', 'twitter']]);
+                                                                            _oneall.push(['social_login', 'set_callback_uri', (window.location.href + ((window.location.href.split('?')[1] ? '&amp;' : '?') + "oa_social_login_source=login"))]);
+                                                                            _oneall.push(['social_login', 'set_custom_css_uri', 'http://public.oneallcdn.com/css/api/socialize/themes/wordpress/default.css']);
+                                                                            _oneall.push(['social_login', 'do_render_ui', 'oneall_social_login_providers_8699747']);
+                                                                        </script>
+                                                                    </div>
+                                                            </div>
+                                                        </div>
+                                                *@
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="loginModal" class="modal fade" role="dialog" onclick="top">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header authorization_head text-center">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="auth">Modal Header</h4>
+            </div>
+            <div class="modal-body text-center">
+                <p style="color: black">Some text in the modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div id="ForgotPasswordModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header authorization_head text-center">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="auth">Modal Header</h4>
+            </div>
+            <div class="modal-body text-center">
+
+                <label for="forgotInputEmail">Email address</label>
+                <input type="email" class="form-control" id="forgotInputEmail" aria-describedby="emailHelp" placeholder="Enter email">
+
+                <button type="button" class="btn btn-default" id="forgotPasswordSubmiter">Submit</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @*<script src="~/Scripts/jquery-2.1.4.min.js"></script>*@
+    <!-- Login Ajax Script -->
+    <script src="~/Scripts/sabio.services.forgotpassword.js"></script>
+    <script src="~/Scripts/sabio.services.login.js"></script>
+
+    <script type="text/javascript">
+
+        sabio.page.startUp = function () {
+
+            //Client-Side Validation - Binding
+            sabio.page.initializeLoginValidation();
+
+            //Login Form - Submit Button Binding
+            $(".loginSubmitBtn").on("click", sabio.page.handlers.login);
+
+            //Forgot password Binding
+            $("#loginresult").on('click', sabio.page.handlers.forgotpassword);
+            $("#forgotPasswordSubmiter").on('click', sabio.page.handlers.submitforgotpassword);
+        }
+
+        //Dan's Forgotten Password Code
+        sabio.page.handlers.forgotpassword = function (event) {
+            event.preventDefault();
+            $("#ForgotPasswordModal").modal();
+        }
+
+        sabio.page.handlers.submitforgotpassword = function () {
+
+            var forgotInputEmail = $('#forgotInputEmail').val();
+
+            var dataFormat = {
+                "Email": forgotInputEmail
+            }
+
+            sabio.services.forgotpassword.forgotpasswordpost(dataFormat, sabio.page.emailSuccessful, sabio.page.emailerror);
+
+            alert("Please check your email");
+
+            $("#ForgotPasswordModal").modal("hide");
+        }
+
+        sabio.page.emailSuccessful = function () {
+
+            console.log("good to go!");
+        }
+
+        sabio.page.emailerror = function () {
+
+            console.log("no");
+        }
+
+        //Mike's Client-Side Validation
+        sabio.page.initializeLoginValidation = function (event) {
+
+            jQuery.validator.setDefaults({
+                debug: true
+            });
+
+            $('#loginForm').validate({
+                rules: {
+                    "Password": {
+                        required: true, //  Password is required
+                        minlength: 6
+                    },
+                    "Username": {
+                        required: true   //  Email is required and must be a valid email address
+                    }
+                },
+
+                //  Error messages to display for user
+                messages: {
+                    "Password": {
+                        required: "Password is required.",
+                        minlength: "Your password must be at least 6 characters."
+                    },
+                    "Username": {
+                        required: "Username is required."
+                    }
+                }
+            });
+        }
+
+        //Login Submit - Handler
+        sabio.page.handlers.login = function (event) {
+            event.preventDefault();
+            console.log("Login Submit Function is working.");
+
+            //Grab User Input
+            var loginUserName = $("#loginUserName").val();
+            var loginPassword = $("#loginPassword").val();
+
+            //Store Input in JSON Object
+            if ($('#loginForm').valid()) {
+                var loginObject = {
+                    Username: loginUserName,
+                    Password: loginPassword
+                };
+
+                //Run Ajax Call
+                sabio.services.login.post(loginObject, sabio.page.handlers.loginPostSuccess, sabio.page.handlers.loginPostFail);
+            }
+        }
+
+        //Login Ajax Success
+        sabio.page.handlers.loginPostSuccess = function (userLoginInfo) {
+            console.log("Login Post Successful.");
+            console.log("User Information: " + userLoginInfo.item)
+
+            //Store User's Login Info/Id
+            sabio.page.userInfo = userLoginInfo.item;
+
+            //Inform User they have been Logged In
+            $(".modal-header h4").html("You are Logged In.")
+            $(".modal-body p").html("Let's Go!");
+            $("#loginModal").modal("show");
+
+            //Redirect to User Profile
+            setTimeout(function () {
+                window.location.href = "/dashboard#/profile"; //will redirect to your blog page (an ex: blog.html)
+            }, 2600);
+
+            console.log(sabio.page.userInfo);
+        }
+
+        //Login Ajax Fail
+        sabio.page.handlers.loginPostFail = function () {
+            console.log("Login Post Failed.");
+
+            //Inform User that their Login Failed
+            $(".modal-header h4").html("Login Failed.")
+            $(".modal-body p").html("Oops! Make sure your Username and Password are correct.");
+            $("#loginModal").modal("show");
+        }
+
+    </script>
+}

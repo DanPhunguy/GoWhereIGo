@@ -1,0 +1,477 @@
+﻿@model Sabio.Web.Models.ViewModels.ItemViewModel<string>
+@using Microsoft.AspNet.Identity
+
+@{
+    ViewBag.Title = "SinglePlace";
+    Layout = "~/Views/Shared/_LayoutAlternate.cshtml";
+}
+
+@section styles {
+    <link href="~/Assets/bower_components/bootstrap-star-rating/css/star-rating.min.css" rel="stylesheet" />
+    <link href="~/Assets/bower_components/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.min.css" rel="stylesheet" />
+
+    <style type="text/css">
+        a {
+            cursor: pointer;
+        }
+
+        nav {
+            margin-bottom: 2em;
+        }
+
+        .gallery {
+            padding: 0;
+        }
+
+            .gallery li {
+                display: inline-block;
+                margin: 0 1em 1em 0;
+                list-style-type: none;
+                text-align: center;
+            }
+
+        @@media (max-width: 767px) {
+            .gallery li {
+                margin: 0;
+            }
+        }
+
+        .gallery1 img {
+            width: 75px;
+            height: 75px;
+        }
+
+        .gallery2 img {
+            width: 6em;
+        }
+
+        .gallery5 img {
+            width: 120px;
+        }
+    </style>
+}
+
+
+<div class="site-overlay"></div>
+
+<div ng-controller="placesSinglePlaceController as main">
+
+    <div gwig-nav-header ng-cloak class="header_section have_icons player" id="header_section" header="main.place.name" photo="main.place.media.url" data-property="{{main.video}}">
+
+        <div class="phone_email_left2">
+            <span><i class="fa fa-phone"></i><a href="">{{main.place.phoneNumber}}</a></span>
+        </div>
+        <!--Places Address-->
+        <div>
+            <span><i class="fa fa-map-marker"><span>{{main.place.address.address1 + ", " + main.place.address.city + ", " + main.place.address.state + ", " + main.place.address.zipCode}}</span></i></span>
+        </div>
+        <!--Places Category-->
+        <div class="phone_email_left2">
+            <span><i ng-class="main.place.category.img"></i><a ng-href="/places/discover/#/{{main.place.city.slug}}/{{main.place.category.tagSlug}}">{{main.place.category.tagName}}</a></span>
+        </div>
+
+        <div><i class="fa fa-globe"></i><a ng-href="{{main.place.website}}" ng-target="_top"> View Website</a></div>
+
+        <div ng-if="main.place.tags"><i class="fa fa-tags"></i><a ng-repeat="tag in main.place.tags track by tag.id" ng-href="/places/discover?tag={{tag.tagName}}">{{tag.tagName}} </a></div>
+    </div>
+
+    <div class="item_wide_container">
+
+        <div class="container fx-fade-down" ng-cloak>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="section-header">Medias</h3>
+                    <ul class="gallery gallery1">
+                        <li ng-repeat="m in main.medias" class="fx-fade-up fx-ease-sine">
+                            <a ng-click="main.openLightboxModal($index)">
+                                <img ng-src="{{m.thumbUrl}}" class="img-thumbnail">
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="section-header">Reviews & Info</h3>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a ng-click="main.openRatingModal()" class='btn btn-success btn-follow pull-right'>Submit review</a>
+
+                            <p ng-if="(dashboard.items.length)"> Average Rating: {{dashboard.items.length}} reviews</p>
+                            <p ng-if="(!dashboard.items.length)">Average Rating: 0 reviews</p>
+                            <p>
+                                GWIG:
+                                <span uib-rating ng-model="dashboard.avgRating" max="5" read-only="true" aria-labelledby="default-rating" style="color: #FFDF00; font-size: 1em;"></span>
+                            </p>
+                            <p>
+                                <img ng-src="{{main.googleIcon}}" />
+                                <span uib-rating ng-model="main.place.placeRating[0].rating" max="5" read-only="true" aria-labelledby="default-rating" style="color: #FFDF00; font-size: 1em;"></span>
+                            </p>
+
+                            <p>
+                                <img ng-src="{{main.yelpIcon}}" />
+                                <span uib-rating ng-model="main.place.placeRating[1].rating" max="5" read-only="true" aria-labelledby="default-rating" style="color: #FFDF00; font-size: 1em;"></span>
+                            </p>
+
+
+                            
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="section-header">Map & Description</h3>
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div>
+                                <ui-gmap-google-map zoom="main.map.zoom" center="main.map.center" options="main.map.options">
+                                    <ui-gmap-marker idKey="1" coords="geo.map.center"></ui-gmap-marker>
+                                </ui-gmap-google-map>
+                            </div>
+                        </div>
+                        <!-- GET DIRECTIONS BUTTON: Wired to googleMaps -->
+                        <div class="col-md-6 btn-group" role="group">
+                            <div>
+                                <div class="bubble">
+                                    <p style="color: black;" id="singlePlaceDescription">{{main.place.description}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3 class="section-header">Reviews</h3>
+
+
+                    </div>
+                </div>
+
+                <div class="row">
+
+
+                    <div class="col-md-6">
+                        <!-- BUTTONS: Submit Review, Follow, Want To Go, Haven't Been
+
+                            ng-controller="followingPlacesController as follow"
+                            -->
+
+                        <div class="followingButtonSingle btn-group">
+                            <a class="btn btn-success ladda btn-follow ladda-button ladda-primary isNotfollowing" data-style="zoom-out" id='yafollow' data-name='follow' data-ng-click="follow.changeToFollowing()">
+                                {{follow.showFollowing}}
+                            </a>
+                            <a ng-click="dashboard.openModal()" class='btn btn-success ladda btn-follow ladda-button ladda-primary'>Submit review</a>
+                        </div>
+                        @*ng-controller="userFavoritePlacesController as button"*@
+                        <div ng-class="changeToHaveBeen()">
+                            <span ng-if="(button.favoriteType == 1)" class="btn btn-warning singlePlaceDropButton disabled">
+                                Have Been
+                            </span>
+                            <span ng-if="(button.favoriteType != 1)" ng-click="button.wantToGoFunction();" class="btn btn-info singlePlaceDropButton">
+                                Want To Go
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <!--USER CHECKIN && Directions
+
+                            ng-controller="userCheckinController as checkin"-->
+                        <div class="btn-group" role="group">
+                            <div>
+                                <a class="btn btn-success" id="singlePlaceCheckIn" ng-click="checkin.Geolocation()">{{checkin.Checkbutton}}</a>
+                                <a class="btn btn-success" id="singlePlaceGetDirections" data-style="zoom-out" ng-href="https://www.google.com/maps/dir/Current+Location/{{main.place.address.address1}},{{main.place.address.city}},{{main.place.address.state}},{{main.place.address.zipCode}}">Get Directions</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    @*<div ng-controller="singlePlaceReviewsTabController as dashboard">
+                            <div ng-if="dashboard.items != null">
+                                <span class="singlePlaceTitles">Reviews</span>
+
+                                <div class="col-md-pull-12" style="display:block" id="ttshowcase_0">
+                                    <div ng-repeat="review in dashboard.items">
+                                        <div class="row" style="display: inline;">
+                                            <div class="col-xs-11">
+                                                <div class="ttshowcase_wrap tt_theme_speech">
+                                                    <div class="col-md-12">
+
+                                                        <!--Angular up/down vote test section-->
+                                                        <div class="row" style="position: absolute; margin-top: 40px; float: left;">
+                                                            <div class="col-xs-1" style="display: block">
+                                                                <div>
+                                                                    <a class="vote" style="font-size: 1.3em" ng-style="{ color: review.netVote == 1 ? '#00FF00' : 'red'}" ng-click="dashboard.upVote(review)"><i class="fa fa-arrow-up"></i></a>
+                                                                    <span class="contentVoteCount" style="padding-left: 5px">{{ review.reviewPointScore }}</span>
+                                                                    <a class="vote" style="font-size: 1.3em" ng-style="{ color: review.netVote == -1 ? '#3399FF' : 'red'}" ng-click="dashboard.downVote(review)"><i class="fa fa-arrow-down"></i></a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--Angular up/down vote test section-->
+
+                                                        <div class="ttshowcase_rl_box tt_2cl tt_text_left " id="" style="padding-left: 50px">
+                                                            <div class="ttshowcase_rl_breed">
+                                                                <div class="ttshowcase_rl_info_wrap tt_info-left tt_text_center">
+                                                                    <div class="ttshowcase_rl_aditional_info ">
+                                                                        <div class="ttshowcase_rl_title reviewer">
+                                                                            {{ review.subject }}
+                                                                        </div>
+                                                                        <div class="ttshowcase_rl_subtitle">
+                                                                            <a href="#" target="_blank">{{ review.userName }}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tt_quote_info-left ttshowcase_rl_quote_sided summary">
+                                                                    <div class="ttshowcase_rl_quote">
+                                                                        <p style="color: black">{{ review.review }}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <span uib-rating ng-model="review.rating" max="{{review.rating}}" read-only="true" aria-labelledby="default-rating" style="color: #FFDF00"></span>
+
+                                                            <div class="dateCreated">{{ review.created | date }}</div>
+                                                        </div>
+                                                        <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="dashboard.items == null">
+                                <div class="singlePlaceTitles">Reviews</div>
+                                <hr style="width:50%" />
+                                <div id="singlePlaceReviewsNoData">Be the first to Review!</div>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 features_block clearfix">
+                    <ul>
+                        <li>
+                            <b><i class="fa fa-rocket"></i> Work hours: </b>
+                            <table>
+                                <tr>
+                                    <td>
+                                        {{main.placeOperatingHoursUnformatted}}
+                                    </td>
+                                </tr>
+                            </table>
+                            <br>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+
+
+
+
+    <script type="text/ng-template" id="AddMediaModal.html">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="dropzone"
+                      method="post"
+                      action="/api/media"
+                      enctype="multipart/form-data"
+                      ng-dropzone
+                      dropzone="MediaCtrl.dropzoneCallbacks"
+                      dropzone-config="MediaCtrl.dzOptions"
+                      event-handlers="{
+                                'addedfile': modalCtrl.dzAddedFile,
+                                'error': modalCtrl.dzError,
+                                'sending': modalCtrl.dzSending,
+                                'success': modalCtrl.dzSuccess,
+                                 }"></form>
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="modalCtrl.cancel()">Close</button>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="AddMediaVideoModal.html">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <label>Title: </label>
+                <input type="text" ng-model="vidmodalCtrl.fileSnippet.title" placeholder="title" />
+                <label>Description: </label>
+                <input type="text" ng-model="vidmodalCtrl.fileSnippet.description" placeholder="Description" />
+                <input type="file" file-model="vidmodalCtrl.filemodel" id="file" class="button" accept="video/*">
+                <button type="button" class="btn btn-default" ng-click="vidmodalCtrl.uploadVideo()">Send</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="vidmodalCtrl.cancel()">Close</button>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </script>
+
+
+    @*Modal*@
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- MODAL: Submit Review [Rate, Subject, Description]-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Submit Review</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DECLARE: PlacesSlug into ID=singlePlaceSlug -->
+    <input type="hidden" id="singlePlaceSlug" value="@Model.Item" />
+
+    <!-- GEOCOMPLETE: Bower plugin file-->
+    <link href="~/Assets/bower_components/geocomplete/examples/stylesSinglePlace.css" rel="stylesheet" />
+
+    <!-- DECLARE: UserName into ID=singlePlaceUserName -->
+    <input type="hidden" id="singlePlaceUserName" value="@User.Identity.Name" />
+
+    <!-- STYLING: For the Followers of the Single Place-->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+    @section pageInitScripts {
+
+        <!-- Import Dropzone Plugin -->
+        <script src="~/Assets/bower_components/dropzone/dist/dropzone.js"></script>
+        <script src="~/Assets/bower_components/angular-dropzone/lib/angular-dropzone.js"></script>
+        <script src="~/Scripts/sabio/sabio.module.angular-dropzone.js"></script>
+        <link href="~/Assets/bower_components/dropzone/dist/dropzone.css" rel="stylesheet" />
+
+        <!--Import Lightbox Plugin-->
+        <link href="~/Assets/bower_components/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.min.css" rel="stylesheet" />
+        <script src="~/Assets/bower_components/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.min.js"></script>
+        <script src="~/Scripts/sabio/sabio.module.angular-lightbox.js"></script>
+
+        <!--Import Angular-File-Model Plugin-->
+        <script src="~/Assets/bower_components/angular-file-model/angular-file-model.js"></script>
+        <script src="~/Scripts/sabio/sabio.module.angular-file-model.js"></script>
+
+        <!--Video Sharing-->
+        <script src="~/Assets/bower_components/ng-videosharing-embed/build/ng-videosharing-embed.min.js"></script>
+        <script src="~/Scripts/sabio/sabio.module.angular-videosharing.js"></script>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0yN-78Gmbvb1fdVJ1mwBCjaAMRK-ZFDY&libraries=places"></script>
+        <script src="~/Assets/bower_components/angular-simple-logger/dist/angular-simple-logger.min.js"></script>
+        <script src="~/Assets/bower_components/lodash/lodash.js"></script>
+        <script src="~/Assets/bower_components/angular-google-maps/dist/angular-google-maps.min.js"></script>
+
+        <script src="~/Scripts/sabio/sabio.module.angular-googlemap.js"></script>
+        <script src="~/Scripts/YTPlayer.js"></script>
+    }
+
+
+    @section scripts {
+
+        @*Custom Directive for Top of Page*@
+        <script src="~/Scripts/sabio/app/directives/gwigNavHeaderDirective.js"></script>
+
+        @* Services && bower_components *@
+        <script src="~/Scripts/sabio.tag.services.js"></script>
+        <script src="~/Assets/bower_components/bootstrap-star-rating/js/star-rating.min.js"></script>
+        <script src="~/Assets/bower_components/moment/moment.js"></script>
+        <script src="~/Scripts/sabio.services.ratings.js"></script>
+        <script src="~/Scripts/sabio.services.UserProfile.js"></script>
+        <script src="~/Scripts/sabio.services.yelp.js"></script>
+        <script src="~/Scripts/sabio.services.vote.js"></script>
+        @*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0yN-78Gmbvb1fdVJ1mwBCjaAMRK-ZFDY&libraries=places"></script>*@
+        <script src="~/Assets/bower_components/geocomplete/jquery.geocomplete.js"></script>
+        <script src="~/Scripts/sabio.services.util.js"></script>
+        <script src="~/Scripts/sabio.services.userFavoritePlaces.js"></script>
+        <script src="~/Scripts/sabio.services.UserCheckin.js"></script>
+        <script src="~/Scripts/sabio.media.services.js"></script>
+        <script src="~/Scripts/sabio.services.followingplaces.js"></script>
+        <script src="~/Scripts/sabio.services.places.js"></script>
+
+        @* Youtube *@
+        <script src="//apis.google.com/js/client:plusone.js"></script>
+        <script src="~/Scripts/youtube/cors_upload.js"></script>
+        @*<script src="~/Scripts/youtube/upload_video.js"></script>*@
+
+        @* Scripts/sabio/app/SERVICES *@
+        <script src="~/Scripts/sabio/app/services/userProfileService.js"></script>
+        <script src="~/Scripts/sabio/app/services/placesService.js"></script>
+        <script src="~/Scripts/sabio/app/services/userCheckinService.js"></script>
+        <script src="~/Scripts/sabio/app/services/userFavoritePlacesService.js"></script>
+        <script src="~/Scripts/sabio/app/services/mediaService.js"></script>
+        <script src="~/Scripts/sabio/app/services/voteService.js"></script>
+        <script src="~/Scripts/sabio/app/services/reviewsService.js"></script>
+        <script src="~/Scripts/sabio/app/services/followingPlacesService.js"></script>
+        <script src="~/Scripts/sabio/app/services/imagesService.js"></script>
+
+        @* Tab Routing *@
+        @*<script src="~/Scripts/sabio/app/singlePlace/Routing/singlePlaceTabsRouting.js"></script>*@
+
+        @* Tab Controllers *@
+        @*<script src="~/Scripts/sabio/app/singlePlace/Controller/tabSinglePlaceHomeController.js"></script>
+            <script src="~/Scripts/sabio/app/singlePlace/Controller/tabSinglePlaceReviewsController.js"></script>
+            <script src="~/Scripts/sabio/app/singlePlace/Controller/tabSinglePlaceGalleryController.js"></script>
+            <script src="~/Scripts/sabio/app/singlePlace/Controller/tabSinglePlaceFollowersController.js"></script>
+            <script src="~/Scripts/sabio/app/singlePlace/Controller/tabSinglePlaceRouteController.js"></script>*@
+        <script src="~/Scripts/sabio/app/singlePlace/Controller/singlePlaceGalleryController.js"></script>
+
+        @* sabio/app/singlePlace/CONTROLLER *@
+        <script src="~/Scripts/sabio/app/singlePlace/Controller/singlePlaceCheckinGeolocationController.js"></script>
+        @* <script src="~/Scripts/sabio/app/singlePlace/Controller/singlePlaceGalleryController.js"></script>*@
+        <script src="~/Scripts/sabio/app/singlePlace/Controller/singlePlaceGoogleMapController.js"></script>
+        <script src="~/Scripts/sabio/app/singlePlace/Controller/singlePlaceImageController.js"></script>
+        <script src="~/Scripts/sabio/app/singlePlace/Controller/singlePlaceMyListsController.js"></script>
+        <script src="~/Scripts/sabio/app/singlePlace/Controller/singlePlaceVideoUploadController.js"></script>
+        <script src="~/Scripts/sabio/app/singlePlace/Controller/singlePlaceMainController.js"></script>
+        <script src="~/Scripts/sabio/app/singlePlace/Controller/singlePlaceFollowingButtonController.js"></script>
+
+        @* sabio/app/REVIEWS: Reviews, Votes, and Stars *@
+        <script src="~/Scripts/sabio/app/reviews/controllers/reviewsRenderAndVote.js"></script>
+        <script src="~/Scripts/sabio/app/reviews/controllers/reviewsStarRating.js"></script>
+        <script src="~/Scripts/sabio/app/reviews/controllers/reviewsSubmitModal.js"></script>
+
+    }

@@ -1,0 +1,33 @@
+﻿        <!--PICTURES AND VIDEOS UPLOAD-->
+<div>
+    <div>
+        <div class="btn-group inline">
+
+            <button type="button" class="btn btn-primary" ng-click="MediaCtrl.toggleVidImg(1)">Pictures</button>
+            <button type="button" class="btn btn-primary" ng-click="MediaCtrl.toggleVidImg(2)">Videos</button>
+            <button type="button" class="btn btn-primary" ng-click="MediaCtrl.toggleVidImg(3)">ShowAll</button>
+
+        </div>
+
+        <div id="singlePlaceAddMediaButtons">
+            <a class="btn btn-success" id="singlePlaceMediaPicture" style="margin-left: 2px;" ng-click="MediaCtrl.OpenModel()">Add a Picture</a>
+            <a class="btn btn-success" id="singlePlaceMediaVideo" ng-click="MediaCtrl.OpenVideoModel()">Add a Video</a>
+        </div>
+    </div>
+    <div>
+        <ul class="gallery gallery1">
+            <li class="galleryimages" ng-repeat="imagevideo in MediaCtrl.filterimagesVideos | orderBy:['-reviewPointScore','-created']">
+                <a ng-click="MediaCtrl.openLightboxModal(imagevideo.arryNumber)">
+                    <img ng-src="{{imagevideo.thumbUrl}}" class="img-thumbnail">
+                </a>
+                <div>
+                    <a class="vote" style="font-size: 1.3em" ng-style="{ color: imagevideo.netVote == 1 ? '#00FF00' : 'red'}" ng-click="MediaCtrl.upVote(imagevideo)"><i class="fa fa-arrow-up"></i></a>
+                    <span class="contentVoteCount" style="padding-left: 5px">{{ imagevideo.reviewPointScore }}</span>
+                    <a class="vote" style="font-size: 1.3em" ng-style="{ color: imagevideo.netVote == -1 ? '#3399FF' : 'red'}" ng-click="MediaCtrl.downVote(imagevideo)"><i class="fa fa-arrow-down"></i></a>
+                </div>
+            </li>
+        </ul>
+        <ul uib-pagination total-items="MediaCtrl.totalGalleryItems" ng-model="MediaCtrl.CurrentPage" ng-change="MediaCtrl.pageChanged()" items-per-page="MediaCtrl.PerPage"
+            max-size="6"></ul>
+    </div>
+</div>
